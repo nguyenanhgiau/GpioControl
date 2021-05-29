@@ -5,11 +5,11 @@
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
-#include "../../../external/libgpio-control-hal/gpio-control-hal.h"
+#include "../gpio-control-hal.h"
 
 
 static void print_usage() {
-     printf("Usage: setgpio [-l value] [-r value]\n");
+    printf("Usage: setgpio [-l value] [-r value]\n");
  	printf("\t where:\n"); 	printf("\t\t -l = Left Led:\n");
  	printf("\t\t -r = Right Led:\n");
  	printf("\t\t value = 0|1\n");

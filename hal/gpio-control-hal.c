@@ -9,7 +9,7 @@
 #include <sys/types.h> 
 #include <errno.h>
 #include <unistd.h>
-#include "../../external/libgpio-control-hal/gpio-control-hal.h"
+#include "gpio-control-hal.h"
 
 /* Replace by the path to your driver */
 #define RIGHT_FILE      "/sys/class/gpio/gpio21/value"
