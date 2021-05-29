@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="app_name">Gpio Leds Control</string>
+    <string name="left_led_key">left_led_key</string>
+    <string name="left_led_title">Left Led</string>
+	
+	<string name="right_led_key">right_led_key</string>
+    <string name="right_led_title">Right Led</string>
+	
+
+
+</resources>

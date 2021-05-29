@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<SwitchPreference
+    android:key="@string/left_led_key"
+    android:title="@string/left_led_title" />
+
+	<SwitchPreference
+    android:key="@string/right_led_key"
+    android:title="@string/right_led_title" />
+
+</PreferenceScreen>
