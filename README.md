@@ -157,6 +157,7 @@ index 891c778..6d03ef3 100644
 ```
 
 ### Rebuild AOSP:
+You don't need to rebuild your kernel, just rebuild AOSP:
 ```bash
 $ make ramdiskimage vendorimage systemimage -j14
 $ ./scripts/android_flash_rpi4.sh sdb #suppose your sdcard is sdb
