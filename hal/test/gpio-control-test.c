@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
-#include "../gpio-control-hal.h"
+#include "../../../external/libgpio-control-hal/gpio-control-hal.h"
 
 
 static void print_usage() {

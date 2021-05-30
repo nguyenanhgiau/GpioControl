@@ -6,11 +6,12 @@ Prerequisites:<br>
 - LEDs, a breadboard and some buses
 - You also need some ingredient, download it at HERE.
 
-## Creating driver LED
-### Creating driver source code
-First of all, you need to build a driver for controlling your LED.<br>
-Thanks a lot to EmbeTronicX for [LED driver](https://embetronicx.com/tutorials/linux/device-drivers/gpio-driver-basic-using-raspberry-pi/)
+First of all, you need to know about:
+- [Platform Architecture](https://developer.android.com/guide/platform)
+- [Android Architecture](https://source.android.com/devices/architecture)
 
+## 1-Building LED Driver
+Thanks a lot to EmbeTronicX for [LED driver](https://embetronicx.com/tutorials/linux/device-drivers/gpio-driver-basic-using-raspberry-pi/)
 ### Integrate LED driver to kernel
 Create $AOSP/kernel/arpi/drivers/leds/leds-rpi4-demo.c file with content as [this file](https://github.com/Embetronicx/Tutorials/blob/master/Linux/Device_Driver/GPIO-in-Linux-Device-Driver/driver.c)
 
@@ -93,20 +94,64 @@ rpi4:/ # echo 1 > /sys/class/gpio/gpio21/value
 rpi4:/ # echo 0 > /sys/class/gpio/gpio21/value
 rpi4:/ # cat /sys/class/gpio/gpio21/value
 ```
-
-## Integrate GpioControl to AOSP
-### Clone GpioControl app
+## 2-Building HAL Library
 Change directory to $AOSP/packages/apps and clone GpioControl app:
 ```bash
 $ cd $AOSP/packages/apps
 $ git clone https://github.com/nguyenanhgiau/GpioControl.git -b rpi4-a11-telephony GpioControl
 ```
+We will build this app later. Now, we just care about HAL library.<br>
+For easy to management, hal should be putted at the right place.
+```bash
+$ mv GpioControl/hal $AOSP/hardware/arpi/ #move hal library to the right place
+$ mv GpioControl/libgpio-control-hal $AOSP/external/ #move header file
+```
+As you can see, $AOSP/hardware/arpi/hal includes hal library and unit test for it.<br>
+Apply the below patch to $AOSP/device/arpi/ to integrate gpio-control-hal library and binary for test.
+```patch
+diff --git a/rpi4.mk b/rpi4.mk
+index 1469e00..06beca5 100644
+--- a/rpi4.mk
++++ b/rpi4.mk
+@@ -51,10 +52,11 @@ PRODUCT_PACKAGES += \
+     audio.a2dp.default \
+     audio.r_submix.default \
+     wificond \
+     wpa_supplicant \
+     wpa_supplicant.conf \
+-    libbt-vendor
++    libbt-vendor \
++    libgpio-control-hal \
++    gpio-control-test
+ 
+ # hardware/interfaces
+ PRODUCT_PACKAGES += \
+```
+You don't need to rebuild your kernel, just rebuild AOSP:
+```bash
+$ make ramdiskimage vendorimage systemimage -j14
+$ ./scripts/android_flash_rpi4.sh sdb #suppose your sdcard is sdb
+```
+After building, flashing and connecting, you need to test your libraries:
+```bash
+rpi4:/ # which gpio-control-hal.so
+1|rpi4:/ # ls /system/lib | grep gpio
+ls: /system/lib: No such file or directory
+1|rpi4:/ # ls /system/lib64/ | grep gpio                                                                                                         
+libgpio-control-hal.so
+rpi4:/ # ls /system/lib*/ | grep gpio                                                                                                            
+libgpio-control-hal.so
+rpi4:/ # which gpio-control-test
+/system/bin/gpio-control-test 
+rpi4:/ # gpio-control-test -l 1 #turn on LED
+rpi4:/ # gpio-control-test -l 0 #turn off LED
+```
+## 3-Integrate GpioControl App
 
 This app uses jni library for controlling gpio on rpi4.<br>
 You have to aware there are some differences among android versions.<br>
 Therefore, you need to modify Android.mk fit to it.<br>
 This Makefile is for android-11.
-
 ### Integrate GpioControl
 ```patch
 diff --git a/rpi4.mk b/rpi4.mk
@@ -123,21 +168,7 @@ index 1469e00..06beca5 100644
  
  # system packages
  PRODUCT_PACKAGES += \
-@@ -51,10 +52,11 @@ PRODUCT_PACKAGES += \
-     audio.a2dp.default \
-     audio.r_submix.default \
-     wificond \
-     wpa_supplicant \
-     wpa_supplicant.conf \
--    libbt-vendor
-+    libbt-vendor \
-+    libgpio-control-hal \
-+    gpio-control-test
- 
- # hardware/interfaces
- PRODUCT_PACKAGES += \
 ```
-
 ### Change permission for your LED driver
 Apply the below path to $AOSP/device/arpi/init.rpi4.rc
 ```patch
@@ -163,22 +194,7 @@ $ make ramdiskimage vendorimage systemimage -j14
 $ ./scripts/android_flash_rpi4.sh sdb #suppose your sdcard is sdb
 ```
 
-After building, flashing and connecting, you need to test your libraries:
-```bash
-rpi4:/ # which gpio-control-test
-/system/bin/gpio-control-test
-rpi4:/ # which gpio-control-hal.so
-1|rpi4:/ # ls /system/lib | grep gpio
-ls: /system/lib: No such file or directory
-1|rpi4:/ # ls /system/lib64/ | grep gpio                                                                                                         
-libgpio-control-hal.so
-libgpio-control-jni.so
-rpi4:/ # ls /system/lib*/ | grep gpio                                                                                                            
-libgpio-control-hal.so
-libgpio-control-jni.so
-```
-
-Open GpioControl app and enjoy your effort.
+Finally, open GpioControl app and enjoy your achievements.
 
 **Thank you so much to VAT for this knowledge!!!**<br>
 **HAVE FUN!**

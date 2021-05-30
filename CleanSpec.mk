@@ -44,9 +44,7 @@
 #$(call add-clean-step, find $(OUT_DIR) -type f -name "IGTalkSession*" -print0 | xargs -0 rm -f)
 #$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/GpioControl)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libgpio-control-hal.so)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libgpio-control-jni.so)
-$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/gpio-control-test)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
